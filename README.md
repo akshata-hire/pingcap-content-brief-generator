@@ -1,6 +1,6 @@
 # PingCAP Content Brief Generator
 
-A CLI tool that generates SEO content briefs for PingCAP writers by pulling live data from DataForSEO, SEMrush, Google Search Console, and Claude.
+A CLI tool that generates SEO/AEO content briefs for PingCAP writers by pulling live data from DataForSEO, SEMrush, Google Search Console, and Claude.
 
 ## What it does
 
