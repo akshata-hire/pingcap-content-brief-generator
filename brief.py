@@ -29,7 +29,7 @@ from googleapiclient.discovery import build
 load_dotenv()
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-6")
 ANTHROPIC_HAIKU_MODEL = os.getenv("ANTHROPIC_HAIKU_MODEL", "claude-haiku-4-5-20251001")
 DATAFORSEO_LOGIN = os.getenv("DATAFORSEO_LOGIN")
 DATAFORSEO_PASSWORD = os.getenv("DATAFORSEO_PASSWORD")
@@ -860,6 +860,24 @@ keyword cluster.
 
 ---
 
+### Target Audience
+
+  Write a focused 3–5 sentence paragraph that names:
+  - The specific job titles or roles (e.g. "Senior engineers, platform architects, and database leads")
+  - The company type and scale (e.g. "at high-growth SaaS companies, fintech platforms, or AI-native startups")
+  - The evaluation stage they are at (e.g. "who are actively evaluating distributed SQL solutions after hitting MySQL scaling limits")
+  - What drives their decision (the primary technical or business concern they are trying to resolve)
+
+  Where relevant, reference PingCAP persona research: TiDB adoption is typically initiated
+  by highly technical stakeholders — senior engineers and engineering leaders — who care
+  most about scalability, high availability, MySQL compatibility, and lower system
+  complexity. Tailor the description to the specific topic and content type rather than
+  copying this verbatim.
+
+  Do NOT merge this section with Page Goal. They are separate outputs.
+
+---
+
 ### Technical Notes
 
 Bullet list of SEO and Core Web Vitals requirements specific to this content type:
@@ -948,7 +966,28 @@ THIS IS THE MOST IMPORTANT SECTION. It must account for at least 50% of the
 total brief word count. Be exhaustive. Every heading in the content must appear
 here with full guidance.
 
-#### Before the heading list, write a "Patterns Favored by AI Overviews & LLMs" block
+#### Before the heading list, write two blocks: a SERP competitor table and an AI Overview patterns analysis
+
+**Block 1 — Top ranking pages table**
+
+Using the SERP results provided in the research data, produce a table of the top
+ranking pages for the primary keyword. Format exactly as follows:
+
+| # | Page | Key Angle |
+|---|------|-----------|
+| [rank] | [page title / domain] | [1–2 sentence description of what this page covers and what angle it takes — be specific, not generic] |
+
+Include up to 5 rows — only pages that are genuinely topically relevant to the
+primary keyword. If fewer than 5 relevant pages are in the SERP data, include only
+those that are relevant and note the others as "not topically relevant — excluded".
+If SERP data is empty or unavailable, write:
+"No SERP data returned — manual review recommended before writing. Run DataForSEO
+with the primary keyword to populate this table before briefing a writer."
+
+Do not skip this table even when SERP data is sparse — a partial table with a note
+is more useful to the writer than omitting it entirely.
+
+**Block 2 — Patterns Favored by AI Overviews & LLMs**
 
 This is a writer-facing orientation section (not for publication). Based on the
 SERP data, LLM mentions data, and competitor headings provided, write 4–6 bullets:
@@ -956,9 +995,11 @@ SERP data, LLM mentions data, and competitor headings provided, write 4–6 bull
 - Which comparison entities appear repeatedly across the top-ranking pages
 - What content structures earn featured snippets (tables, definition blocks, FAQs)
 - Any content gaps the top-ranking pages miss that TiDB can own
-- Editorial warnings for this topic (e.g. "benchmark claims require dated sources")
+- Editorial warnings specific to this topic (e.g. "benchmark claims require dated sources")
 
 Ground this in the actual SERP and competitor data provided — do not invent patterns.
+If no SERP data is available, write "Insufficient SERP data — manual review recommended"
+for this block and move on. Do not omit the block entirely.
 
 ---
 
@@ -1446,8 +1487,12 @@ fails a check before proceeding. Do not output a brief that fails any check.
     2,000–5,000 → 3,000–3,800; 5,000+ → 3,500–4,500), the resulting range, and a
     one-sentence justification. A brief that ignores MSV and defaults to 3,800+ words
     for a low-volume keyword is a failure.
-18. The outline contains a "Patterns Favored by AI Overviews & LLMs" block
-    before the heading list, with 4–6 bullets grounded in the SERP data.
+18. The outline section opens with two blocks before the heading list:
+    (1) A SERP competitor table listing up to 5 top-ranking pages with their key angles,
+    or a clear note that SERP data was unavailable. A brief that silently omits this table
+    is a failure — an empty table with a note is acceptable, a missing table is not.
+    (2) A "Patterns Favored by AI Overviews & LLMs" block with 4–6 bullets grounded in
+    the SERP and competitor data. If data is unavailable, the block must say so explicitly.
 19. The outline contains a maximum of 10 H2 sections. Merge any that exceed this.
 20. For comparison and listicle content types, the second H2 is an "at a glance"
     comparison table with 6–8 rows. A missing comparison table is a failure.
@@ -1505,6 +1550,10 @@ fails a check before proceeding. Do not output a brief that fails any check.
 42. Every H2 in the outline has a Visual line (Table / Architecture diagram / Code snippet /
     Sequence diagram / None needed). The brief contains no more than 2 non-table visual
     suggestions. Sections that could use a table have a Table suggestion, not a diagram.
+43. The brief contains a standalone Target Audience section between Page Goal and Technical
+    Notes. It names specific job titles, company type, evaluation stage, and primary
+    decision driver. A brief that merges audience into Page Goal or omits this section
+    entirely is a failure.
 """
 
 
@@ -2496,20 +2545,12 @@ def main():
         doc_url = create_google_doc(doc_title, brief)
     except Exception as exc:
         print(f"          Google Docs failed: {exc}")
-        fallback = os.path.join(
-            SCRIPT_DIR,
-            f"brief_{topic[:40].replace(' ', '_')}.md",
-        )
-        with open(fallback, "w") as fh:
-            fh.write(brief)
-        print(f"          Brief saved locally instead: {fallback}")
-        sys.exit(1)
-    finally:
-        safe_title = re.sub(r"[^\w\s-]", "", topic[:50]).strip().replace(" ", "*")
-        local_path = os.path.join(os.getcwd(), f"brief*{safe_title}.md")
+        safe_title = re.sub(r"[^\w\s-]", "", topic[:50]).strip().replace(" ", "_")
+        local_path = os.path.join(os.getcwd(), f"brief_{safe_title}.md")
         with open(local_path, "w", encoding="utf-8") as f:
             f.write(brief)
-        print(f"          Brief saved locally: {local_path}")
+        print(f"          Brief saved locally instead: {local_path}")
+        sys.exit(1)
 
     print()
     print("Done! Your content brief is ready:")
