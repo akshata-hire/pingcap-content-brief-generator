@@ -974,6 +974,28 @@ Ground this in the actual SERP and competitor data provided — do not invent pa
 - Each H2 must represent a distinct stage in the buyer's evaluation journey.
   Merge any H2 that overlaps in scope with an adjacent H2.
 
+- AEO answer H2 (mandatory for all content types): Every brief must include one H2
+  positioned in the first third of the outline whose heading directly answers the primary
+  keyword's core question or search intent (e.g. if the keyword is "AI agent memory",
+  the H2 might be "What is AI agent memory and why do agents lose it?"). The first 2–3
+  sentences under this H2 must be written as a self-contained, extractable answer —
+  structured so an AI Overview or featured snippet can lift them verbatim. Check the
+  SERP snapshot in the research data: if a competitor already holds the featured snippet
+  for this query, note it in the Inline Content Guidance and instruct the writer to
+  provide more depth and specificity, not just matching coverage.
+  A brief missing this AEO answer H2 is a failure.
+- Named mechanism H2 (mandatory for all content types): Every brief must include one
+  H2 that explicitly closes the loop between the problem raised in the intro and TiDB's
+  specific mechanism that solves it. The heading must name the actual mechanism — not
+  "How TiDB helps" (too vague) but "How TiDB's Multi-Raft architecture eliminates
+  cross-shard transaction overhead" or equivalent. Valid named mechanisms include:
+  Raft consensus, Multi-Raft, TiKV, TiFlash, PD placement driver, HTAP, MVCC,
+  two-phase commit, online DDL, per-agent isolation. The Inline Content Guidance for
+  this section must instruct the writer to name the mechanism in the first sentence and
+  connect it directly to the problem named in the intro — not describe it as a general
+  capability.
+  A brief missing this named mechanism H2 is a failure.
+
 ---
 
 The outline must have a clear narrative arc from start to finish:
@@ -996,6 +1018,23 @@ format "Target: ~X–Y words". Distribute the total word count proportionally.
 The vendor reviews section should receive 25–30% of total words. Quick answer,
 comparison table, and framework sections should be 180–320 words each.
 **Rationale**: Exactly 2 sentences — no more. Sentence 1: cover search intent (which query pattern this heading captures and why this phrasing wins over alternatives). Sentence 2: cover one of — LLM entity co-occurrence (which named entities this surfaces and why), buyer evaluation logic (what the evaluator must believe at this stage), or semantic positioning (how this claims a gap competitors miss). Generic rationales (“improves SEO”, “adds keyword”) are not acceptable.
+
+### Verified customer proof points
+
+When the brief requires a customer case study, concrete proof point, or social proof reference, use ONLY customers from this verified list. Never write anonymized placeholders ("a leading global online travel agency", "a multinational financial services firm", etc.) — if nothing from this list fits the topic, omit the case study slot from the outline entirely rather than fabricating or anonymizing.
+
+Verified customers with confirmed pingcap.com case study URLs:
+
+- Flipkart — [https://www.pingcap.com/case-study/flipkart-transforming-database-management-and-reducing-complexity-with-tidb/](https://www.pingcap.com/case-study/flipkart-transforming-database-management-and-reducing-complexity-with-tidb/)
+- MNC Bank — [https://www.pingcap.com/case-study/mnc-bank-supercharges-performance-with-tidb/](https://www.pingcap.com/case-study/mnc-bank-supercharges-performance-with-tidb/)
+- Zhihu — [https://www.pingcap.com/blog/from-plan-to-execution-zhihus-guide-to-petabyte-scale-tidb-database-migration/](https://www.pingcap.com/blog/from-plan-to-execution-zhihus-guide-to-petabyte-scale-tidb-database-migration/)
+- Rakuten — [https://www.pingcap.com/blog/revolutionizing-loyalty-programs-rakuten-distributed-sql/](https://www.pingcap.com/blog/revolutionizing-loyalty-programs-rakuten-distributed-sql/)
+- Kimi — [https://www.pingcap.com/case-study/kimi-2-6-agent-hosting-platform-tidb-cloud/](https://www.pingcap.com/case-study/kimi-2-6-agent-hosting-platform-tidb-cloud/)
+- Manus — [https://www.pingcap.com/case-study/manus-agentic-ai-database-tidb/](https://www.pingcap.com/case-study/manus-agentic-ai-database-tidb/)
+- Trip.com — [https://www.pingcap.com/case-study/trip-com-boosts-real-time-data-processing-and-financial-settlement-with-tidb/](https://www.pingcap.com/case-study/trip-com-boosts-real-time-data-processing-and-financial-settlement-with-tidb/)
+
+Customers likely to have case studies (verify the exact URL with a web search before using — do not guess the URL pattern):
+Pinterest, Plaid, CardX, Catalyst, WeBank, Tuya, Bolt, Mercari, Dify
 
 **Inline Content Guidance**: After the rationale, provide specific writer
 instructions for this section's body copy. Include ALL of the following that
@@ -1269,6 +1308,20 @@ if not relevant, bringing the total to 8.
 
 ---
 
+### Visual recommendations
+
+For every H2 in the outline, assess whether the section describes something visual by nature — architecture, data flow, comparison across options, a process or sequence, a before/after. For those sections only, add a one-line visual note immediately after the Inline Content Guidance in this format:
+
+**Visual:** [Table / Architecture diagram / Code snippet / Sequence diagram / None needed] — [one sentence: what it would show and why prose alone is insufficient, OR "prose is sufficient for this section"]
+
+Rules:
+
+- Default to None needed unless prose genuinely cannot convey the concept clearly
+- Default to Table before suggesting a diagram — tables are zero production cost for the writer and solve most comparison and mapping needs
+- For code-heavy sections (SQL, CLI, SDK examples), always specify Code snippet with the language
+- For architecture sections naming TiDB components (TiKV, TiFlash, PD, Raft), specify Architecture diagram only if no equivalent already exists on docs.pingcap.com — if one likely exists, note "check docs.pingcap.com before commissioning"
+- Never suggest more than 2 non-table visuals per brief — flag if the count would exceed this
+
 ### Schema Markup Recommendations
 
 List the exact schema types to implement. For each, write one sentence explaining
@@ -1437,6 +1490,21 @@ fails a check before proceeding. Do not output a brief that fails any check.
     HowTo (adoption steps), FAQPage (if FAQ present), and SoftwareApplication.
 38. For content refresh briefs (solution type), every recommended heading change
     includes a "Current:" label and a one-sentence change rationale.
+39. Every case study or customer proof point in the brief uses a verified named customer
+    from the roster above, with a real pingcap.com URL. Anonymized examples ("a leading
+    global X company") are a failure. A missing case study slot is better than a
+    fabricated or anonymized one.
+40. The outline contains an AEO answer H2 in the first third of the heading list whose
+    heading directly answers the primary keyword's core question. The first 2–3 sentences
+    under it are written as a self-contained extractable answer. A brief without this H2
+    is a failure.
+41. The outline contains a named mechanism H2 that closes the loop between the intro's
+    problem and a specific TiDB mechanism by name (Raft, TiFlash, HTAP, TiKV, PD, MVCC,
+    two-phase commit, online DDL, per-agent isolation, or equivalent). The heading names
+    the mechanism explicitly — generic headings like "How TiDB helps" are a failure.
+42. Every H2 in the outline has a Visual line (Table / Architecture diagram / Code snippet /
+    Sequence diagram / None needed). The brief contains no more than 2 non-table visual
+    suggestions. Sections that could use a table have a Table suggestion, not a diagram.
 """
 
 
